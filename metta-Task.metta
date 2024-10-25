@@ -13,35 +13,34 @@
 ))
 !(head (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))))
 
-(= (foldr $list $initial)(
+(= (foldr $list $f $initial)(
     (case $list
         (
         (NilNum $initial)
-        ((ConsNum $x $xs) (foldr $xs (+ $initial $x)))
+        ((ConsNum $x $xs) (foldr $xs $f ($f $initial $x) ))
         )
       )
+     )
     )
-)
 
-!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 0 )
+(= (add $x $y)(+ $x $y))
+(= (mul $x $y)(* $x $y))
 
+!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) add 0 )
+!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) mul 1 )
+
+(= (isMember NilNum) False)
 (= (isMember $list $y)(
-     (case $list
-      (
-        (NilNum False)
-        ((ConsNum $x $xs)(or (== $x $y) (isMember $xs $y)))
+     (ConsNum $x $xs)(or (== $x $y) (isMember $xs $y))
          )
      )
-))
-
-
 !(isMember (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 23)
 !(isMember (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 20)
 
 (= (length NilNum) 0)
 (= (length (ConsNum $x $xs))
    (+ 1 (length $xs)))
-! (length (ConsNum 1 (ConsNum 2 (ConsNum 3 NilNum))))
+!(length (ConsNum 1 (ConsNum 2 (ConsNum 3 NilNum))))
 
 (= (maxValue NilNum $cur ) $cur)
 (= (maxValue (ConsNum $x $xs) $cur)(
@@ -87,11 +86,6 @@
 ))
 
 !(filter (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum gr2 $x)
-
-(= (push NilNum $x)
-(
-    (ConsNum $x NilNum)
-))
 
 ; Base case: appending to empty list
 (= (append NilNum $x)
