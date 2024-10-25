@@ -117,7 +117,17 @@
 
 (= (pop NilNum) NilNum)
 
-(= (pop (ConsNum $x $xs)) $xs)
+(= (pop (ConsNum $x $xs))
+(
+ if(== $xs NilNum) $x (pop $xs)
+))
 
 
-!(= pop (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))))
+!(pop (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))))
+
+(= (reverse NilNum $acc) $acc )
+(= (reverse (ConsNum $x $xs) $acc)
+(
+   reverse $xs (ConsNum $x $acc)
+))
+!(reverse (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum)
