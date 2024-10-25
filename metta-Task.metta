@@ -20,13 +20,12 @@
         ((ConsNum $x $xs) (foldr $xs (+ $initial $x)))
         )
       )
-    ;  $initial
     )
 )
 !(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 0 )
 
 (= (isMember $list $y)(
-     (case $list 
+     (case $list
       (
         (NilNum False)
         ((ConsNum $x $xs)(or (== $x $y) (isMember $xs $y)))
@@ -58,14 +57,67 @@
 
 (= (map $f NilNum) ())
 (= (map $f (ConsNum $x $xs))(
-    ConsNum ($f $x) (map $f $xs) 
+    ConsNum ($f $x) (map $f $xs)
 ))
 
 (= (square $x)(* $x $x))
 
 !(map square (ConsNum 1 (ConsNum 5 (ConsNum 3 NilNum))))
 
-(= (removeElement NilNum) NilNum)
-(= (removeElement (ConsNum $x $xs) $y )(
-    if(== $y $x)(Cons)
-) )
+(= (removeElement NilNum (ConsNum $c) $y) (ConsNum $c))
+;(= (removeElement NilNum NilNum $y) NilNum)
+
+(= (removeElement (ConsNum $x $xs) $acc $y)
+   (if (== $x $y)
+      (removeElement $xs $acc $y)
+      (removeElement $xs (ConsNum $x $acc) $y)))
+
+!(removeElement (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) () 5)
+
+
+(= (filter NilNum (ConsNum $c) $f $y) (ConsNum $c))
+(= (filter (ConsNum $x $xs) $acc $f $y)(
+     if($f $x) (filter $xs (ConsNum $x $acc) $f $y)
+       (filter $xs $acc $f $y)
+))
+
+(= (gr2 $x)(
+    > $x 5
+))
+
+!(filter (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum gr2 $x)
+
+(= (push NilNum $x)
+(
+    (ConsNum $x NilNum)
+))
+
+; Base case: appending to empty list
+(= (append NilNum $x)
+   (ConsNum $x NilNum))
+
+; Recursive case: appending to non-empty list
+(= (append (ConsNum $x $xs) $y)
+   (ConsNum $x (append $xs $y)))
+
+!(append  (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) 8)
+
+(= (push NilNum $y)
+(
+    (ConsNum $y NilNum)
+))
+
+(= (push $xs $y)
+(
+ (ConsNum $y $xs)
+))
+
+!(push (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) 12)
+
+
+(= (pop NilNum) NilNum)
+
+(= (pop (ConsNum $x $xs)) $xs)
+
+
+!(= pop (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))))
