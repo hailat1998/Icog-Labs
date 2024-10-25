@@ -1,20 +1,4 @@
-(: List type)
-(: Nil List)
-(: Cons (-> Number List List))
-
-!(get-type (Cons 1 Nil))    ; List
-!(Cons 1 (Cons 2 (Cons 3 Nil))) ; [1,2,3]
-(= (head $list)
-    (case $list
-         (
-            (Nil Nil)
-            ((Cons $x $xs) $x)
-        )
-    )
-)
-!(head (Cons 1 (Cons 2 (Cons 3 Nil))))
-
-
+; put you code here
 (: ListNum type)
 (: NilNum ListNum)
 (: ConsNum (-> Number ListNum ListNum))
@@ -30,35 +14,58 @@
 !(head (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))))
 
 (= (foldr $list $initial)(
-    (case $list 
+    (case $list
         (
         (NilNum $initial)
-        ((ConsNum $x $xs) ((foldr $xs (+ $initial $x))))
+        ((ConsNum $x $xs) (foldr $xs (+ $initial $x)))
         )
       )
     ;  $initial
-    ) 
-)
-
-(= (factorial $x)
-   (case $x
-     ((0 1)
-      ($_ (* $x (factorial (- $x 1)))))
-   )
-)
-
-
-!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 0 )
-
-(= (sum-multiple $num $sum)
-    (if (> $num 0)
-        (if (or (== 0 (% $num 3)) (== 0 (% $num 5)))
-            (sum-multiple (- $num 1) (+ $sum $num))
-            (sum-multiple (- $num 1) $sum)
-        )
-        $sum
     )
 )
-; Sum of multiples of 3 and 5 upto 10
-!(sum-multiple 15 0)
+!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 0 )
 
+(= (isMember $list $y)(
+     (case $list 
+      (
+        (NilNum False)
+        ((ConsNum $x $xs)(or (== $x $y) (isMember $xs $y)))
+         )
+     )
+))
+
+
+!(isMember (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 23)
+!(isMember (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 20)
+
+(= (length NilNum) 0)
+(= (length (ConsNum $x $xs))
+   (+ 1 (length $xs)))
+! (length (ConsNum 1 (ConsNum 2 (ConsNum 3 NilNum))))
+
+(= (maxValue NilNum $cur ) $cur)
+(= (maxValue (ConsNum $x $xs) $cur)(
+   if(> $cur $x) (maxValue $xs $cur) (maxValue $xs $x )
+   ))
+!(maxValue (ConsNum 1 (ConsNum 58 (ConsNum 3 NilNum))) -2)
+
+(= (minValue NilNum $cur ) $cur)
+(= (minValue (ConsNum $x $xs) $cur)(
+   if(< $cur $x) (minValue $xs $cur) (minValue $xs $x )
+   ))
+!(minValue (ConsNum 1 (ConsNum 58 (ConsNum 3 NilNum))) 100)
+
+
+(= (map $f NilNum) ())
+(= (map $f (ConsNum $x $xs))(
+    ConsNum ($f $x) (map $f $xs) 
+))
+
+(= (square $x)(* $x $x))
+
+!(map square (ConsNum 1 (ConsNum 5 (ConsNum 3 NilNum))))
+
+(= (removeElement NilNum) NilNum)
+(= (removeElement (ConsNum $x $xs) $y )(
+    if(== $y $x)(Cons)
+) )
