@@ -22,6 +22,7 @@
       )
     )
 )
+
 !(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 0 )
 
 (= (isMember $list $y)(
@@ -64,7 +65,7 @@
 
 !(map square (ConsNum 1 (ConsNum 5 (ConsNum 3 NilNum))))
 
-(= (removeElement NilNum (ConsNum $c) $y) (ConsNum $c))
+(= (removeElement NilNum  $c $y)  $c)
 ;(= (removeElement NilNum NilNum $y) NilNum)
 
 (= (removeElement (ConsNum $x $xs) $acc $y)
@@ -72,17 +73,17 @@
       (removeElement $xs $acc $y)
       (removeElement $xs (ConsNum $x $acc) $y)))
 
-!(removeElement (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) () 5)
+!(removeElement (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum 5)
 
 
-(= (filter NilNum (ConsNum $c) $f $y) (ConsNum $c))
+(= (filter NilNum  $c $f $y) $c)
 (= (filter (ConsNum $x $xs) $acc $f $y)(
      if($f $x) (filter $xs (ConsNum $x $acc) $f $y)
        (filter $xs $acc $f $y)
 ))
 
 (= (gr2 $x)(
-    > $x 5
+    > $x 1
 ))
 
 !(filter (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum gr2 $x)
