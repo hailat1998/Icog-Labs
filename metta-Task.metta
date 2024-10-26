@@ -83,11 +83,9 @@
 
 !(filter (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum gr2 $x)
 
-; Base case: appending to empty list
 (= (append NilNum $x)
    (ConsNum $x NilNum))
 
-; Recursive case: appending to non-empty list
 (= (append (ConsNum $x $xs) $y)
    (ConsNum $x (append $xs $y)))
 
@@ -125,5 +123,22 @@
 
 (= (foldr NilNum $f $initial) $initial)
 (= (foldr (ConsNum $x $xs) $f $initial)(
-    foldl reverse (ConsNum $x $xs) $f $initial
+    foldl (reverse (ConsNum $x $xs) NilNum) $f $initial
 ))
+
+!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) add 0 )
+
+(= (sort NilNum $sorted) $sorted)
+
+(= (sort (ConsNum $x $xs) $sorted)
+    (insert $x (sort $xs $sorted)))
+
+(= (insert $x NilNum) (ConsNum $x NilNum))
+
+(= (insert $x (ConsNum $y $ys))
+    (if (< $x $y)
+        (ConsNum $x (ConsNum $y $ys))
+        (ConsNum $y (insert $x $ys))))
+
+!(sort (ConsNum 100 (ConsNum 1000 (ConsNum 76 NilNum))) NilNum)
+
