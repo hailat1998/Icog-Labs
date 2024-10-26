@@ -12,26 +12,22 @@
     )
 ))
 !(head (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))))
-
-(= (foldr $list $f $initial)(
-    (case $list
-        (
-        (NilNum $initial)
-        ((ConsNum $x $xs) (foldr $xs $f ($f $initial $x) ))
+(= (foldl NilNum $f $initial) $initial)
+(= (foldl (ConsNum $x $xs) $f $initial)(
+            foldl $xs $f ($f $initial $x) )
         )
-      )
-     )
-    )
+
+
 
 (= (add $x $y)(+ $x $y))
 (= (mul $x $y)(* $x $y))
 
-!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) add 0 )
-!(foldr (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) mul 1 )
+!(foldl (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) add 0 )
+!(foldl (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) mul 1 )
 
-(= (isMember NilNum) False)
-(= (isMember $list $y)(
-     (ConsNum $x $xs)(or (== $x $y) (isMember $xs $y))
+(= (isMember NilNum $y) False)
+(= (isMember  (ConsNum $x $xs) $y)(
+    if(== $x $y) True (isMember $xs $y)
          )
      )
 !(isMember (ConsNum 23 (ConsNum 54 (ConsNum 76 NilNum))) 23)
@@ -126,3 +122,8 @@
    reverse $xs (ConsNum $x $acc)
 ))
 !(reverse (ConsNum 1 (ConsNum 5 (ConsNum 3 (ConsNum 10 NilNum)))) NilNum)
+
+(= (foldr NilNum $f $initial) $initial)
+(= (foldr (ConsNum $x $xs) $f $initial)(
+    foldl reverse (ConsNum $x $xs) $f $initial
+))
