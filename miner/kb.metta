@@ -47,3 +47,8 @@
     (Feeds Person1 Dog1 Evening)
     (Feeds Person2 Cat1 Morning)
     (Feeds Person2 Cat1 Evening)
+
+
+    (Inheritance Dog Mammal)
+    (Inheritance Mammal Animal)
+    (Inheritance Animal Living)

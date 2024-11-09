@@ -1,0 +1,16 @@
+! (import! &kb kb)
+(= (pattern $x $y)
+(match &kb (Inheritance $x $y) (Inheritance $x $y) ))
+!(pattern $x $y)
+
+
+(= (valuation $x $y)
+(let* (($x1 $y1))
+     ((pattern $x $y) $x)
+     ((pattern $x $y) $y)
+     (= valX (cons atom x -> $x1))
+     (= valY (cons atom y -> $y1)))
+      cons-atom valX valY )
+
+
+!(valuation $x $y)
