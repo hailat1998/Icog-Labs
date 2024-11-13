@@ -5,49 +5,64 @@
 ! (add-reduct &self (= (pattern-space) (new-space)))
 
 
+
 (= (pattern $x $y)
    (match &kb (Inheritance $x $y)
          (Inheritance $x $y)))
 
+! (pattern $x $y)
 
-(= (count Nil $val) $val)
+
 (= (count $x $val)
-   (count (cdr-atom $x) (+ $val 1)))
+   (
+    if(== $x ()) $val
+    (count (cdr-atom $x) (+ $val 1))))
 
-! (count pattern 0)
-
+! (count (collapse (pattern $x $y)) 0)
 
 (= (checkSup $count )
-   (let $val ($count )
-        (if (>= $val minsup)
-            $val
-            Error)))
+        (if(>= $count minsup)
+            (Supported)
+            (Error Below Support)))
 
-! (checkSup (count pattern 0))
+! (checkSup (count (collapse (pattern $x $y)) 0))
 
+(= (matchX)(
+    collapse (match &self (Inheritance $x $y)
+         $x )
+))
+
+(= (matchY)(
+ collapse (match &self (Inheritance $x $y)
+         $y )
+))
+
+
+! (matchX)
+! (matchY)
 
 (= (valuation $x $y)
-   (let* (($x1 $y1)
-          ($patternX ((pattern $x $y) $x))
-          ($patternY ((pattern $x $y) $y)))
-        (= valX (cons-atom 'x $x1))
-        (= valY (cons-atom 'y $y1))
-        (cons-atom valX valY)))
+   (let* (($patternX (matchX))
+          ($patternY (matchY))
+        ( $valX (cons-atom x-> $patternX))
+        ( $valY (cons-atom y-> $patternY)))
+        (cons-atom $valX ($valY))))
 
 ! (valuation $x $y)
 
 
 ; Used "|" as delimiter to separate the variable x from from variable y.
-(= shab
-   (let* (($shabX $shabY)
-          ($patternX ((pattern $x $y) $x))
-          ($patternY ((pattern $x $y) $y)))
-        (= $mshabX (cons-atom $shabX 'y))
-        (= $shabX| (cons-atom $mshabX '|))
-        (cons-atom $shabX| $shabY)))
+ (= (shab)
+   (let* (
+          ($shabX ( matchX))
+          ($shabY ( matchY))
+        ( $mshabX (cons-atom $shabX (Variable y)))
+        ( $mshabX| (cons-atom $mshabX (|))))
+        (cons-atom $mshabX| $shabY)))
+
+!(shab)
 
 
-! (shab)
 
 (= (specializeX $x)
    (add-atom (pattern-space)
