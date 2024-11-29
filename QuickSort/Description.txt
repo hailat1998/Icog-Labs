@@ -1,0 +1,28 @@
+Functional Programming Characteristics:
+  Immutability: The algorithm never modifies the input array
+  Pure Functions: Same input always produces same output
+  No Side Effects: Functions don't modify external state
+  Referential Transparency: Functions can be replaced with their values
+Algorithm Complexity:
+ Time Complexity:
+   Average Case: O(n log n)
+   Worst Case: O(n²)
+ Space Complexity:
+   O(n) due to creating new arrays
+   Additional O(log n) stack space for recursion
+Key Functional Programming Principles Demonstrated:
+  Data Transformation:
+   Each step creates new data instead of modifying existing data
+   State transitions are explicit and tracked through return values
+  Recursion:
+   Natural recursive solution instead of imperative loops
+   Each recursive call works on a new copy of data
+  Composition:
+   Functions compose together to form the complete solution
+   Each function has a single responsibility
+
+
+Usage
+
+   run from CMD with this command 
+    python3 QuickSort.py

@@ -1,6 +1,7 @@
-! (import! &kb kb)
+! (import! &kb kb)'
 
-(= minsup 2)
+
+(= (minsup) 2)
 
 ! (add-reduct &self (= (pattern-space) (new-space)))
 
@@ -14,18 +15,20 @@
 
 
 (= (count $x $val)
-   (
+   ((= (pattern $y)
+                (Inheritance $x $y))))
+
     if(== $x ()) $val
     (count (cdr-atom $x) (+ $val 1))))
 
 ! (count (collapse (pattern $x $y)) 0)
 
-(= (checkSup $count )
-        (if(>= $count minsup)
+(= (checkSup $count)
+        (if (>= $count minsup)
             (Supported)
             (Error Below Support)))
 
-! (checkSup (count (collapse (pattern $x $y)) 0))
+! (let $res (checkSup (count (collapse (pattern $x $y)) 0)) $res)
 
 (= (matchX)(
     collapse (match &self (Inheritance $x $y)
@@ -64,15 +67,20 @@
 
 
 
-(= (specializeX $x)
-   (add-atom (pattern-space)
+ (= (specializeX $x)
+(let $exists (match pattern-space (= (pattern $y)
+                (Inheritance $x $y)))
+                if( > (length $exists) 0) empty
+            (add-atom (pattern-space)
              (= (pattern $y)
-                (Inheritance $x $y))))
-
+                (Inheritance $x $y)))))
 
 
 
 (= (specializeY $y)
+(let $exists (match pattern-space (= (pattern $x)
+                (Inheritance $x $y))))
+              if(> (length $exists) 0) empty
    (add-atom (pattern-space)
              (= (pattern $x)
                 (Inheritance $x $y))))
@@ -82,7 +90,7 @@
 
 (= (specialize $shab $endX)
    (let $val (car-atom $shab)
-        (cond
+        (case $val
           ((and (!= $val '|) (not $endX))
            (specializeY $val)
            (specialize (cdr-atom $shab) False))

@@ -49,6 +49,8 @@
     (Feeds Person2 Cat1 Evening)
 
 
-    (Inheritance Dog Mammal)
-    (Inheritance Mammal Animal)
-    (Inheritance Animal Living)
+(Inheritance Dog Mammal)
+(Inheritance Mammal Animal)
+(Inheritance Animal Living)
+(Inheritance Square Shape)
+(Inheritance Bamboo Wood)
