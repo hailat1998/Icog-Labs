@@ -1,7 +1,7 @@
 ! (import! &kb kb)'
 
 
-(= (minsup) 2)
+!(= (sup) (2))
 
 ! (add-reduct &self (= (pattern-space) (new-space)))
 
@@ -15,30 +15,28 @@
 
 
 (= (count $x $val)
-   ((= (pattern $y)
-                (Inheritance $x $y))))
-
+   (
     if(== $x ()) $val
     (count (cdr-atom $x) (+ $val 1))))
 
 ! (count (collapse (pattern $x $y)) 0)
 
-(= (checkSup $count)
-        (if (>= $count minsup)
+(= (checkSup $count )
+        (if(>= $count sup)
             (Supported)
             (Error Below Support)))
 
-! (let $res (checkSup (count (collapse (pattern $x $y)) 0)) $res)
+! (checkSup (count (collapse (pattern $x $y)) 0))
 
 (= (matchX)(
-    collapse (match &self (Inheritance $x $y)
+    match &self (Inheritance $x $y)
          $x )
-))
+)
 
 (= (matchY)(
- collapse (match &self (Inheritance $x $y)
+ match &self (Inheritance $x $y)
          $y )
-))
+)
 
 
 ! (matchX)
@@ -51,23 +49,28 @@
         ( $valY (cons-atom y-> $patternY)))
         (cons-atom $valX ($valY))))
 
-! (valuation $x $y)
+;! (valuation $x $y)
 
 
-; Used "|" as delimiter to separate the variable x from from variable y.
- (= (shab)
+
+(= (shab)
    (let* (
           ($shabX ( matchX))
           ($shabY ( matchY))
         ( $mshabX (cons-atom $shabX (Variable y)))
         ( $mshabX| (cons-atom $mshabX (|))))
-        (cons-atom $mshabX| $shabY)))
+        ;(cons-atom $mshabX| $shabY)
+(superpose(
+(xShab $shabX)
+$shabY
+))
+))
+
 
 !(shab)
 
 
-
- (= (specializeX $x)
+(= (specializeX $x)
 (let $exists (match pattern-space (= (pattern $y)
                 (Inheritance $x $y)))
                 if( > (length $exists) 0) empty
@@ -86,23 +89,13 @@
                 (Inheritance $x $y))))
 
 
+(= (specialize $shab)(
+   (let $shabV ($shab)
+   if(== shabV ()) (specializeY variable-Y)(
+            (if(== (get-metatype (car-atom shabV)) Expression) (specializeX cdr-atom (car-atom $shabV)(specialize (cdr-atom $shabV))) ((specializeY (car-atom $shabV)) specialize (cdr-atom $shabV)))
+))))
 
-
-(= (specialize $shab $endX)
-   (let $val (car-atom $shab)
-        (case $val
-          ((and (!= $val '|) (not $endX))
-           (specializeY $val)
-           (specialize (cdr-atom $shab) False))
-          ((== $val '|)
-           (specialize (cdr-atom $shab) True))
-          (else
-           (specializeX $val)
-           (specialize (cdr-atom $shab) True)))))
-
-
-! (specialize shab False)
-
+!(match pattern-space (=(pattern $x) (Inheritance $x $y)) Inheritance $x $y )
 
 
 

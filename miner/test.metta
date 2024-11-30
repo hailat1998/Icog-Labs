@@ -58,7 +58,7 @@
 
 
 
- (= (shab)
+(= (shab)
    (let* (
           ($shabX ( matchX))
           ($shabY ( matchY))
@@ -73,6 +73,34 @@ $shabY
 
 
 !(shab)
+
+
+(= (specializeX $x)
+(let $exists (match pattern-space (= (pattern $y)
+                (Inheritance $x $y)))
+                if( > (length $exists) 0) empty
+            (add-atom (pattern-space)
+             (= (pattern $y)
+                (Inheritance $x $y)))))
+
+
+
+(= (specializeY $y)
+(let $exists (match pattern-space (= (pattern $x)
+                (Inheritance $x $y))))
+              if(> (length $exists) 0) empty
+   (add-atom (pattern-space)
+             (= (pattern $x)
+                (Inheritance $x $y))))
+
+
+(= (specialize $shab)(
+   (let $shabV ($shab)
+   if(== shabV ()) (specializeY variable-Y)(
+            (if(== (get-metatype (car-atom shabV)) Expression) (specializeX cdr-atom (car-atom $shabV)(specialize (cdr-atom $shabV))) ((specializeY (car-atom $shabV)) specialize (cdr-atom $shabV)))
+))))
+
+!(match pattern-space (=(pattern $x) (Inheritance $x $y)) Inheritance $x $y )
 
 
 
