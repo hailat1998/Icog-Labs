@@ -1,0 +1,78 @@
+void SentenceGenStimulateAgent::generate_stimulate_sentence()
+{
+    HandleSeq hwords;
+    HandleSeq hword_instances;
+    StringSeq selected_words;
+
+    auto evalWord = [this](std::string word) -> Handle {
+        return _scm_eval->eval_h("(ConceptNode \"" + word + "\")");
+    };
+
+    auto select = [](int num,StringSeq &data,StringSeq &out) -> void {
+        int rnd;
+        for (int i = 0; i < num;++i){
+            rnd = rand() % data.size();
+            out.push_back(data[rnd]);
+        }
+    };
+
+    if (time(nullptr) > stime + 5) {
+        current_group = (current_group + 1) % swords.size();
+        if (current_group == 0)
+            this_thread::sleep_for(seconds(5));
+        stime = time(nullptr);
+    }
+
+    if (_cogserver.getCycleCount() % special_word_occurence_period == 0) { // and
+    //(_cogserver.getCycleCount() - startcount) > 5 ) {
+      select(4,swords[current_group],selected_words);
+      select(2,words,selected_words);
+    } else {
+        select(6,words,selected_words);
+    }
+
+    for (std::string word : selected_words) {
+        hwords.push_back(evalWord(word));
+        hword_instances.push_back(evalWord(word + "@" + std::to_string(rand())));
+    }
+
+    for (Handle h : hwords)
+        _as->stimulate(h,2);
+    for (Handle h : hword_instances)
+        _as->stimulate(h,0.5);
+    this_thread::sleep_for(milliseconds(400));
+
+    printf("stifunds: %ld \n",_as->get_STI_funds());
+   }
+}
+
+
+
+Here in this experiment the main function that generates and stimulates the sentences based on their type is the above function. When we see step by step what is going on in the above function it is as folow:
+
+STEP 1: Variable Setup
+  Initialize HandleSeq for concepts, instances
+  Initialize StringSeq for word selection
+
+STEP 2: Helper Functions Setup
+  evalWord lambda: word → ConceptNode conversion
+  select lambda: random selection algorithm
+
+
+STEP 3: Time-based Group Management
+  5-second interval check
+  Circular group rotation
+  Cycle completion pause
+
+STEP 4: Word Selection Logic
+   Special period: 4 special + 2 regular words
+   Normal period: 6 regular words
+
+STEP 5: Node Creation & Stimulation
+   Create concept nodes
+   Create unique instances
+   Apply differential stimulation values
+
+STEP 6: System Management
+  Thread sleep for processing
+  STI funds monitoring

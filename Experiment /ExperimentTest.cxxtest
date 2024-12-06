@@ -1,0 +1,123 @@
+/*
+* Just high level testcase for the experiment SentenceGenStimulateAgent with
+*
+*/
+
+
+#include <cxxtest/TestSuite.h>
+
+#include <opencog/cogserver/server/CogServer.h>
+#include <opencog/atomspace/AtomSpace.h>
+#include <opencog/cogserver/modules/agents/AgentsModule.h>
+
+
+#include "SentenceGenStimulateAgent.h"
+
+class SentenceGenStimulateAgentTest : public CxxTest::TestSuite {
+private:
+    SentenceGenStimulateAgent* agent;
+    AtomSpace* as;
+    CogServer* _cogserver;
+    SchemeEvaluator* scm_eval;
+
+public:
+    // Setup Method
+    void setUp() {
+
+        scm_eval = new SchemeEvaluator(as);
+        _cogserver = &cogserver();
+
+        agent = new SentenceGenStimulateAgent(*as);
+
+        as = &_cogserver->getAtomSpace();
+        // Initialize test data
+        initializeTestData();
+    }
+
+    // Teardown Method
+    void tearDown() {
+        delete agent;
+        delete scm_eval;
+        delete as;
+    }
+
+    // Test Cases
+
+    // 1. Word Evaluation Tests
+    void testConceptNodeCreation() {
+        Handle h = agent->evalWord("test_word");
+        TS_ASSERT(h != Handle::UNDEFINED);
+        TS_ASSERT_EQUALS(h->get_type(), CONCEPT_NODE);
+        TS_ASSERT_EQUALS(h->get_name(), "test_word");
+    }
+
+    // 2. Word Selection Tests
+    void testRandomWordSelection() {
+        StringSeq source_words = {"word1", "word2", "word3", "word4"};
+        StringSeq selected;
+        agent->select(2, source_words, selected);
+
+        TS_ASSERT_EQUALS(selected.size(), 2);
+        TS_ASSERT(std::find(source_words.begin(), source_words.end(),
+                           selected[0]) != source_words.end());
+    }
+
+    // 3. Time Management Tests
+    void testGroupSwitching() {
+        time_t initial_time = agent->getSTime();
+
+        // Force time advancement
+        agent->setMockTime(initial_time + 6);
+        agent->generate_stimulate_sentence();
+
+        TS_ASSERT_DIFFERS(agent->getCurrentGroup(), 0);
+        TS_ASSERT_DIFFERS(agent->getSTime(), initial_time);
+    }
+
+    // 4. Stimulation Tests
+    void testStimulationValues() {
+        float initial_sti = as->get_STI_funds();
+        agent->generate_stimulate_sentence();
+        float final_sti = as->get_STI_funds();
+
+        TS_ASSERT_DIFFERS(initial_sti, final_sti);
+        TS_ASSERT(final_sti > initial_sti);
+    }
+
+    // 5. Special Word Occurrence Tests
+    void testSpecialWordOccurrence() {
+        // Set cycle count to trigger special word selection
+        agent->setCycleCount(agent->getSpecialWordOccurrencePeriod());
+
+        StringSeq selected;
+        agent->generate_stimulate_sentence();
+        selected = agent->getSelectedWords();
+
+        TS_ASSERT_EQUALS(selected.size(), 6); // 4 special + 2 regular
+    }
+
+    // 6. Performance Tests
+    void testExecutionTime() {
+        auto start = std::chrono::high_resolution_clock::now();
+        agent->generate_stimulate_sentence();
+        auto end = std::chrono::high_resolution_clock::now();
+
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                       (end - start).count();
+
+        TS_ASSERT_LESS_THAN(duration, 500); // Should complete within 500ms
+    }
+
+    // 7. Error Handling Tests
+    void testEmptyWordList() {
+        StringSeq empty_words;
+        StringSeq selected;
+
+        TS_ASSERT_THROWS(agent->select(1, empty_words, selected),
+                        std::runtime_error);
+    }
+private:
+    void initializeTestData() {
+        // Initialize test data here
+    }
+}
