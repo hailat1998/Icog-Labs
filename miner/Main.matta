@@ -1,4 +1,5 @@
 ! (import! &kb kb)'
+! (import &utils utils)
 
 
 !(= (sup) (2))
@@ -73,7 +74,7 @@ $shabY
 (= (specializeX $x)
 (let $exists (match pattern-space (= (pattern $y)
                 (Inheritance $x $y)))
-                if( > (length $exists) 0) empty
+                if(isNotEmpty $exists) (empty)
             (add-atom (pattern-space)
              (= (pattern $y)
                 (Inheritance $x $y)))))
@@ -83,12 +84,13 @@ $shabY
 (= (specializeY $y)
 (let $exists (match pattern-space (= (pattern $x)
                 (Inheritance $x $y))))
-              if(> (length $exists) 0) empty
+              if(isNotEmpty $exists) (empty)
    (add-atom (pattern-space)
              (= (pattern $x)
                 (Inheritance $x $y))))
 
-
+;; we have to use the let block before making car-atom inside the Expression.
+;; that have to be fixed in order to specialize the given shallow abstraction.
 (= (specialize $shab)(
    (let $shabV ($shab)
    if(== shabV ()) (specializeY variable-Y)(
