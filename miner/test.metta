@@ -1,4 +1,4 @@
-; put you code here
+
 (Inheritance Dog Mammal)
 (Inheritance Mammal Animal)
 (Inheritance Animal Living)
@@ -41,7 +41,7 @@
 (= (matchY)(
  match &self (Inheritance $x $y)
          $y )
-)
+ )
 
 
 ! (matchX)
@@ -67,40 +67,54 @@
         ;(cons-atom $mshabX| $shabY)
 (superpose(
 (xShab $shabX)
-$shabY
+($shabY)
 ))
 ))
 
 
 !(shab)
 
+!(------------------------------------------------------------------------------)
+!(------------------------------------------------------------------------------)
+!(------------------------------------------------------------------------------)
+!(------------------------------------------------------------------------------)
+!(------------------------------------------------------------------------------)
+
 
 (= (specializeX $x)
-(let $exists (match pattern-space (= (pattern $y)
-                (Inheritance $x $y)))
-                if( > (length $exists) 0) empty
-            (add-atom (pattern-space)
-             (= (pattern $y)
-                (Inheritance $x $y)))))
-
+   (let $exists (match pattern-space (= (pattern $y)
+                                       (Inheritance $x $y))$x)
+        (if (isNotEmpty $exists)
+            (empty)
+            (add-atom pattern-space
+                      (= (pattern $y)
+                         (Inheritance $x $y))))))
 
 
 (= (specializeY $y)
-(let $exists (match pattern-space (= (pattern $x)
-                (Inheritance $x $y))))
-              if(> (length $exists) 0) empty
-   (add-atom (pattern-space)
-             (= (pattern $x)
-                (Inheritance $x $y))))
+   (let $exists (match pattern-space (= (pattern $x)
+                                       (Inheritance $x $y)) $y)
+        (if (isNotEmpty $exists)
+            (empty)
+            (add-atom pattern-space
+                      (= (pattern $x)
+                         (Inheritance $x $y))))))
 
-
-(= (specialize $shab)(
+;; we have to use the let block before making car-atom inside the Expression.
+;; that have to be fixed in order to specialize the given shallow abstraction.
+(= (specialize $shab)
    (let $shabV ($shab)
-   if(== shabV ()) (specializeY variable-Y)(
-            (if(== (get-metatype (car-atom shabV)) Expression) (specializeX cdr-atom (car-atom $shabV)(specialize (cdr-atom $shabV))) ((specializeY (car-atom $shabV)) specialize (cdr-atom $shabV)))
-))))
+     (if (== $shabV ())
+         (specializeY variable-Y)
+         (if (== (get-metatype (car-atom $shabV)) Expression)
+             (let $s (car-atom $shabV)
+                  (specializeX (cdr-atom ($s))))
+             ((specializeY (car-atom ($shabV)))
+              (specialize (cdr-atom ($shabV))))))))
 
-!(match pattern-space (=(pattern $x) (Inheritance $x $y)) Inheritance $x $y )
+;!(specialize shab)
+
+!(match pattern-space (=(pattern $x) (Inheritance $x $y)) (Inheritance $x $y) )
 
 
 
